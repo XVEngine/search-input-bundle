@@ -1,0 +1,151 @@
+xv-search-input {
+  display: block;
+  position: relative;
+
+  > label {
+    > span {
+      display: block;
+      font-size: 16px;
+      font-weight: 500;
+    }
+
+    > div {
+      position: relative;
+
+    }
+
+  }
+
+
+  .VS-search {
+    .VS-search-box {
+      border-radius: 0;
+      border: 1px solid $border-color;
+      background: #FFF;
+      min-height: 45px;
+      display: flex;
+      align-items: center;
+      padding: 5px;
+
+      input {
+        height: auto;
+        margin-top: -4px;
+      }
+
+
+
+      .VS-placeholder {
+        position: static;
+        color: $border-color;
+      }
+
+      .search_parameter {
+        white-space: nowrap;
+        margin: 0;
+        line-height: 1em;
+        padding: 3px;
+        height: auto;
+
+        &.selected {
+          border-radius: 0;
+          background: rgba($main-color2, 0.8);
+          border-color: $main-color2;
+        }
+
+        div.key {
+          font-size:inherit;
+        }
+
+        .VS-tag-remove {
+          background: none;
+          position: static;
+          margin: 0;
+          margin-right: 2px;
+        }
+      }
+
+      .VS-icon-search {
+        display: none;
+      }
+      .VS-search-inner {
+        margin:0;
+      }
+
+      .VS-tags-wrapper {
+        width: calc(100% - 50px);
+
+        &:after {
+          content: "";
+          clear: both;
+        }
+      }
+
+      .VS-clear-input {
+        border-left: 1px solid $border-color;
+        background: none;
+        right:0;
+        top:0;
+        height: 100%;
+        width: 45px;
+        display: flex;
+        align-items: center;
+        font-size: 25px;
+        flex: none;
+
+        i {
+          display: block;
+          margin: auto;
+        }
+
+        .icon.icon-close {
+          display:none;
+        }
+      }
+
+    }
+  }
+
+  &.required {
+    > label {
+      > span {
+        &:after {
+          content: "*";
+          color: $main-color2;
+        }
+      }
+    }
+  }
+
+  &.invalid, &.invalidated {
+    > label {
+      .input {
+        border-color: $main-color2;
+        outline-color: $main-color2;
+      }
+    }
+  }
+
+  &.without-label {
+    > label {
+      > span {
+        display: none;
+      }
+    }
+  }
+
+}
+
+.VS-interface {
+  .ui-autocomplete-category {
+    pointer-events: none;
+  }
+
+  .ui-menu-item {
+    padding: 5px;
+    &.ui-state-focus {
+      background: $main-color2;
+      color: #FFF;
+      font-weight: bold;
+    }
+  }
+}
