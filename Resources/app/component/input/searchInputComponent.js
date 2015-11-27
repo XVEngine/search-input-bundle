@@ -6,10 +6,8 @@
         }
     });
     
-    var prototype = namespace.searchInputComponent.prototype;
-    
 
-    prototype.getTemplate = function() {
+    namespace.searchInputComponent.prototype.getTemplate = function() {
         var tmplString = app.utils.getString(function() {
             //@formatter:off
             /**<string>
@@ -30,25 +28,34 @@
 
 
 
-    prototype.getDefaultParams = function() {
+    namespace.searchInputComponent.prototype.getDefaultParams = function() {
         return {
             placeholder : "",
-            value : null
+            value : null,
+            parameters: [],
+            strict : true
         };
     };
 
 
-    prototype.prepare = function() {
+    namespace.searchInputComponent.prototype.prepare = function() {
+        this._placeholder = "";
+        this.setParameters(this.params.parameters);
+        this.setStrict(this.params.strict);
+        this.setPlaceholder(this.params.placeholder);
+
+
         this.initLibs();
-        this.initEvents();
     };
 
-    prototype.initLibs = function() {
+    namespace.searchInputComponent.prototype.initLibs = function () {
         var self = this;
         return app.service.ui.jsLoader.load(self.params.libs).then(function () {
             return app.service.ui.cssLoader.load(self.params.libsCss);
         }).then(function () {
-            return self.initComponent();
+            self._initialized = true;
+            self.render();
+            return true;
         }).fail(function () {
             console.error(arguments);
         });
@@ -56,13 +63,13 @@
 
 
 
-    prototype.setPlaceholder = function(value) {
-        this.$input.attr("placeholder", value);
+    namespace.searchInputComponent.prototype.setPlaceholder = function(value) {
+        this._placeholder = value;
         return this;
     };
 
 
-    prototype.getSearchBoxTemplate = function() {
+    namespace.searchInputComponent.prototype.getSearchBoxTemplate = function() {
         return app.utils.getString(function() {
             //@formatter:off
             /**<string>
@@ -84,7 +91,7 @@
         });
     };
 
-    prototype.getSearchParameterTemplate = function() {
+    namespace.searchInputComponent.prototype.getSearchParameterTemplate = function() {
         return app.utils.getString(function() {
             //@formatter:off
             /**<string>
@@ -101,97 +108,84 @@
         });
     };
 
-    prototype.initComponent = function () {
 
 
-        VisualSearch.template['search_box'] = _.template(this.getSearchBoxTemplate());
-        VisualSearch.template['search_parameter'] =  _.template(this.getSearchParameterTemplate());
+
+    namespace.searchInputComponent.prototype.setValue = function (value) {
+        this._value = value;
+
+        this.render();
+        return this;
+    };
+
+
+    namespace.searchInputComponent.prototype.getValue = function (value) {
+        return  this._value;
+    };
+
+
+    namespace.searchInputComponent.prototype.setParameters = function (parameters) {
+        this._parameters = [];
 
         var self = this;
-
-        this.visualSearch = new VisualSearch({
-            el		:  this.$input,
-            placeholder: this.params.placeholder,
-            strict: true,
-            search: function(json){
-                self._value = json;
-                self.onInput();
-            },
-            parameters: [
-                {
-                    key: "City",
-                    category: "Location",
-                    placeholder: "",
-                    operators: [
-                        "is",
-                        "is not"
-                    ],
-                    values: [
-                        'Cleveland',
-                        'New York City',
-                        'Brooklyn',
-                        'Manhattan',
-                        'Queens',
-                        'The Bronx',
-                        'Staten Island',
-                        'San Francisco',
-                        'Los Angeles',
-                        'Seattle',
-                        'London',
-                        'Portland',
-                        'Chicago',
-                        'Boston'
-                    ]
-                },
-                {
-                    key: "U.S. State",
-                    category: "Location",
-                    placeholder: "",
-                    values: [
-                        "Alabama", "Alaska", "Arizona", "Arkansas", "California",
-                        "Colorado", "Connecticut", "Delaware", "District of Columbia", "Florida",
-                        "Georgia", "Guam", "Hawaii", "Idaho", "Illinois",
-                        "Indiana", "Iowa", "Kansas", "Kentucky", "Louisiana",
-                        "Maine", "Maryland", "Massachusetts", "Michigan", "Minnesota",
-                        "Mississippi", "Missouri", "Montana", "Nebraska", "Nevada",
-                        "New Hampshire", "New Jersey", "New Mexico", "New York", "North Carolina",
-                        "North Dakota", "Ohio", "Oklahoma", "Oregon", "Pennsylvania",
-                        "Puerto Rico", "Rhode Island", "South Carolina", "South Dakota", "Tennessee",
-                        "Texas", "Utah", "Vermont", "Virginia", "Virgin Islands",
-                        "Washington", "West Virginia", "Wisconsin", "Wyoming"
-                    ]
-                },
-                {
-                    key: "Filter",
-                    placeholder: "Status",
-                    values: ['published', 'unpublished', 'draft']
-                },
-                {
-                    key: "Number",
-                    placeholder: "Between 1 and 10",
-                    type: "number",
-                    min: 1,
-                    max: 10
-                },
-                {
-                    key: "Date",
-                    placeholder: "Any",
-                    type: "date",
-                    min: 1,
-                    max: 10
-                }
-            ],
-            defaultquery	: [
-            ]
-
+        parameters.forEach(function(parameter){
+            self.addParameter(parameter)
         });
+
+        this.render();
+        return this;
+    };
+
+
+    namespace.searchInputComponent.prototype.addParameter = function (parameters) {
+        this._parameters.push(parameter);
+
+        self.render();
+        return this;
+    };
+
+    namespace.searchInputComponent.prototype.setStrict = function (strictValue) {
+        this._strict = strictValue;
+
+        self.render();
+        return this;
+    };
+
+
+    namespace.searchInputComponent.prototype.render = function () {
+
+        clearTimeout(this._renderTimeout);
+
+        var self = this;
+        if(!this._initialized){
+            return this;
+        }
+        this._renderTimeout = setTimeout(function(){
+            self._render();
+        }, 50);
 
         return this;
     };
 
-    prototype.initEvents = function () {
 
+    namespace.searchInputComponent.prototype._render = function () {
+        if(!this.visualSearch ){
+            VisualSearch.template['search_box'] = _.template(this.getSearchBoxTemplate());
+            VisualSearch.template['search_parameter'] =  _.template(this.getSearchParameterTemplate());
+        }
 
+        var self = this;
+        this.visualSearch = new VisualSearch({
+            el		:  this.$input,
+            placeholder: this._placeholder,
+            strict: this._strict,
+            search: function(json){
+                self._value = json;
+                self.onInput();
+            },
+            parameters: self._parameters,
+            defaultquery: self._value
+        });
         return this;
     };
 
