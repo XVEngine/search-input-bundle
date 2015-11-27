@@ -112,8 +112,13 @@
 
 
     namespace.searchInputComponent.prototype.setValue = function (value) {
+        if(!value){
+            value = [];
+        }
+
         this._value = value;
 
+        this.refreshValue();
         this.render();
         return this;
     };
@@ -137,17 +142,17 @@
     };
 
 
-    namespace.searchInputComponent.prototype.addParameter = function (parameters) {
+    namespace.searchInputComponent.prototype.addParameter = function (parameter) {
         this._parameters.push(parameter);
 
-        self.render();
+        this.render();
         return this;
     };
 
     namespace.searchInputComponent.prototype.setStrict = function (strictValue) {
         this._strict = strictValue;
 
-        self.render();
+        this.render();
         return this;
     };
 
@@ -175,17 +180,29 @@
         }
 
         var self = this;
-        this.visualSearch = new VisualSearch({
+
+        var config = {
             el		:  this.$input,
             placeholder: this._placeholder,
             strict: this._strict,
             search: function(json){
                 self._value = json;
                 self.onInput();
+                self.refreshValue()
             },
             parameters: self._parameters,
             defaultquery: self._value
-        });
+        };
+
+        this.visualSearch = new VisualSearch(config);
+        return this;
+    };
+
+
+
+    namespace.searchInputComponent.prototype.refreshValue = function () {
+        this.$element[this._value.length > 0 ? 'addClass' : 'removeClass']("has-value");
+
         return this;
     };
 

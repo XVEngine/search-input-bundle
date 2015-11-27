@@ -8,7 +8,7 @@ namespace XVEngine\Bundle\SearchInputBundle\Component\Input\SearchInputComponent
  * @author Krzysztof Bednarczyk
  * @package XVEngine\Bundle\SearchInputBundle\Component\Input\SearchInputComponent
  */
-class SelectParameter extends AbstractParameter
+class TextParameter extends AbstractParameter
 {
 
 
@@ -23,7 +23,7 @@ class SelectParameter extends AbstractParameter
      */
     function getType()
     {
-        return "text";
+        return null;
     }
 
     /**

@@ -26,6 +26,8 @@ class SearchInputComponent extends AbstractInputComponent
     {
         $this->setComponentName('input.searchInputComponent');
 
+        $this->setParamByRef("parameters", $this->parameters);
+
         $this->setParam("libs", [
             "//cdn.rawgit.com/bordeux/search.js/master/vendor/underscore-1.4.3.js",
             "//cdn.rawgit.com/bordeux/search.js/master/vendor/backbone.js",
@@ -74,6 +76,15 @@ class SearchInputComponent extends AbstractInputComponent
         $this->parameters = $parameters;
 
         return $this;
+    }
+
+    /**
+     * @author Krzysztof Bednarczyk
+     * @param bool|true $value
+     * @return $this
+     */
+    public function setStrict($value = true){
+        return $this->setParam("strict", $value);
     }
 
 }

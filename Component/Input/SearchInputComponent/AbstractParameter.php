@@ -37,16 +37,17 @@ abstract class AbstractParameter implements \JsonSerializable
     ];
 
 
-
-
     /**
      * AbstractParameter constructor.
      * @author Krzysztof Bednarczyk
-     * @param string $key
+     * @param $key
+     * @param string $category
      */
-    public function __construct($key)
+    public function __construct($key, $category = "Others", $operators = null)
     {
-        $this->key = $key;
+        $this->setKey($key);
+        $this->setCategory($category);
+        $operators && $this->setOperators($operators);
     }
 
 
@@ -158,13 +159,19 @@ abstract class AbstractParameter implements \JsonSerializable
      */
     function jsonSerialize()
     {
-        return [
+        $arr =  [
             "key" => $this->getKey(),
             "category" => $this->getCategory(),
             "type" => $this->getType(),
             "placeholder" => $this->getPlaceholder(),
             "operators" => $this->getOperators(),
+            "min" => null,
+            "max" => null,
+            "selected" => false,
+            "editing" => false,
         ];
+
+        return $arr;
     }
 
 

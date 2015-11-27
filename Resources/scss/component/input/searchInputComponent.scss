@@ -16,6 +16,22 @@ xv-search-input {
 
   }
 
+  &.has-value {
+    .VS-search {
+      .VS-search-box {
+        .VS-clear-input {
+          .icon.icon-close{
+            display: block;
+          }
+
+          .icon.icon-search {
+            display: none;
+          }
+        }
+      }
+    }
+  }
+
 
   .VS-search {
     .VS-search-box {
